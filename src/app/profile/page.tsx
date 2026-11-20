@@ -68,6 +68,17 @@ export default function ProfilePage() {
     setDirty(true);
   };
 
+  const toggleWeekday = (day: number) => {
+    setDraft((d) => {
+      if (!d) return d;
+      const current = d.preferredWeekdays ?? [];
+      const next = current.includes(day) ? current.filter((x) => x !== day) : [...current, day].sort((a, b) => a - b);
+      if (next.length < 2 || next.length > 6) return d;
+      return { ...d, preferredWeekdays: next, daysPerWeek: next.length as UserProfile['daysPerWeek'] };
+    });
+    setDirty(true); setMsg(null);
+  };
+
   const toggleJoint = (j: JointTag) => {
     setDraft((d) => {
       if (!d) return d;
@@ -88,12 +99,13 @@ export default function ProfilePage() {
       setMsg(v.errors[0]);
       return;
     }
-    if (regen) {
+    const scheduleChanged = !!profile && (profile.daysPerWeek !== next.daysPerWeek || JSON.stringify(profile.preferredWeekdays ?? []) !== JSON.stringify(next.preferredWeekdays ?? []));
+    if (regen || scheduleChanged) {
       const plan = generateProgram(next);
       saveProfile(next);
       savePlan(plan);
       updateProfile(next, false);
-      setMsg('Профиль сохранён, программа пересчитана.');
+      setMsg(scheduleChanged && !regen ? 'Расписание сохранено, программа автоматически пересчитана.' : 'Профиль сохранён, программа пересчитана.');
     } else {
       updateProfile(next, false);
       setMsg('Профиль сохранён.');
@@ -141,18 +153,18 @@ export default function ProfilePage() {
               ))}
             </select>
           </label>
-          <label className="block text-sm font-medium text-gray-700">
-            Тренировок в неделю
-            <select
-              value={draft.daysPerWeek}
-              onChange={(e) => set('daysPerWeek', parseInt(e.target.value, 10) as 2 | 3 | 4 | 5 | 6)}
-              className="mt-1 h-11 w-full rounded-xl border border-gray-200 bg-white px-3 text-sm"
-            >
-              {[2, 3, 4, 5, 6].map((d) => (
-                <option key={d} value={d}>{d}</option>
+          <div>
+            <p className="mb-2 text-sm font-medium text-gray-700">Дни тренировок · {draft.daysPerWeek} в неделю</p>
+            <div className="grid grid-cols-4 gap-2">
+              {(['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'] as const).map((day, i) => (
+                <button key={day} type="button" onClick={() => toggleWeekday(i)} className={[
+                  'rounded-xl border px-3 py-2 text-sm font-medium transition',
+                  (draft.preferredWeekdays ?? []).includes(i) ? 'border-accent bg-accent text-white' : 'border-gray-200 bg-white text-gray-600'
+                ].join(' ')}>{day}</button>
               ))}
-            </select>
-          </label>
+            </div>
+            <p className="mt-2 text-xs text-gray-500">Выбрано {draft.preferredWeekdays?.length ?? draft.daysPerWeek} дней в неделю. Минимум — 2.</p>
+          </div>
           <label className="block text-sm font-medium text-gray-700">
             Длительность
             <select
