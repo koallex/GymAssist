@@ -148,6 +148,21 @@ export interface LoggedExercise {
   unit: 'reps' | 'sec';
   restSec: number;
   sets: LoggedSet[];
+  /** Рекомендованный вес на момент начала тренировки (для анализа и отображения). */
+  suggestedWeightKg?: number | null;
+}
+
+/** Как тренировка ощущалась: «easy» = было слишком легко, «too_hard» = слишком тяжело. */
+export type PerceivedDifficulty = 'easy' | 'right' | 'hard' | 'too_hard';
+/** Выполнена ли тренировка в запланированном объёме. */
+export type CompletionLevel = 'full' | 'mostly' | 'partial';
+
+/** Опрос после тренировки — вход для progressionEngine. */
+export interface WorkoutFeedback {
+  difficulty: PerceivedDifficulty;
+  completion: CompletionLevel;
+  /** Суставы, где был дискомфорт или боль (пусто = не было). */
+  discomfortJoints: JointTag[];
 }
 
 export interface WorkoutSession {
@@ -162,6 +177,8 @@ export interface WorkoutSession {
   completed: boolean;
   exercises: LoggedExercise[];
   notes?: string;
+  /** Опрос после тренировки (необязателен для старых записей). */
+  feedback?: WorkoutFeedback;
 }
 
 /** Запись массы тела для графика. */

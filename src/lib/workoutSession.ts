@@ -1,11 +1,18 @@
 /** Создание и обновление сессии тренировки. Без React. */
-import type { PlanDay, LoggedExercise, LoggedSet, WorkoutSession } from './types';
+import type { PlanDay, LoggedExercise, LoggedSet, WorkoutFeedback, WorkoutSession } from './types';
 
 function uid(): string {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-export function createSessionFromDay(day: PlanDay): WorkoutSession {
+/**
+ * Создаёт сессию из дня плана. Если переданы рекомендации по весу (progressionEngine),
+ * они подставляются в подходы — пользователь может изменить вес до или во время упражнения.
+ */
+export function createSessionFromDay(
+  day: PlanDay,
+  targets: Record<string, { weightKg: number | null }> = {},
+): WorkoutSession {
   const exercises: LoggedExercise[] = day.exercises.map((pe) => ({
     exerciseId: pe.exerciseId,
     targetMuscle: pe.targetMuscle,
@@ -14,9 +21,10 @@ export function createSessionFromDay(day: PlanDay): WorkoutSession {
     plannedRepMax: pe.repMax,
     unit: pe.unit,
     restSec: pe.restSec,
+    suggestedWeightKg: targets[pe.exerciseId]?.weightKg ?? null,
     sets: Array.from({ length: pe.sets }, (_, i) => ({
       setIndex: i,
-      weightKg: null,
+      weightKg: targets[pe.exerciseId]?.weightKg ?? null,
       reps: null,
       completed: false,
     })),
@@ -90,9 +98,23 @@ export function updateSetValues(
   return { ...session, exercises };
 }
 
-export function finishSession(session: WorkoutSession): WorkoutSession {
+/** Меняет рабочий вес во всех ещё не выполненных подходах упражнения. */
+export function setWorkingWeight(
+  session: WorkoutSession,
+  exerciseIndex: number,
+  weightKg: number | null,
+): WorkoutSession {
+  const exercises = session.exercises.map((ex, ei) => {
+    if (ei !== exerciseIndex) return ex;
+    return { ...ex, sets: ex.sets.map((s) => (s.completed ? s : { ...s, weightKg })) };
+  });
+  return { ...session, exercises };
+}
+
+export function finishSession(session: WorkoutSession, feedback?: WorkoutFeedback): WorkoutSession {
   return {
     ...session,
+    feedback,
     completed: true,
     finishedAt: new Date().toISOString(),
   };

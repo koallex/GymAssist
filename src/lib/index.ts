@@ -11,3 +11,6 @@ export * from './analytics';
 export * from './storage';
 export * from './workoutSession';
 export * from './progressStats';
+export * from './loadConfig';
+export * from './loadEstimator';
+export * from './progressionEngine';

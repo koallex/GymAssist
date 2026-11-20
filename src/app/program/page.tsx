@@ -1,12 +1,14 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Clock, Replace, ChevronDown, ChevronUp } from 'lucide-react';
 import {
+  adaptProgram,
   getAlternatives,
   getExercise,
+  loadHistory,
   MUSCLE_LABELS_RU,
   replaceExercise,
   savePlan,
@@ -24,7 +26,7 @@ const WD_FULL = ['Понедельник', 'Вторник', 'Среда', 'Че
 function ProgramContent() {
   const router = useRouter();
   const search = useSearchParams();
-  const { ready, onboarded, plan: initial, refresh } = useAppData();
+  const { ready, onboarded, plan: initial, profile, refresh } = useAppData();
   const [plan, setPlan] = useState<WorkoutPlan | null>(null);
   const [selected, setSelected] = useState(0);
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -47,11 +49,17 @@ function ProgramContent() {
     }
   }, [initial, search]);
 
-  if (!ready || !onboarded || !plan) {
+  // Скорректированный объём и рекомендованные веса; исходный план (для замен) остаётся без изменений.
+  const adapted = useMemo(
+    () => (plan && profile ? adaptProgram(plan, loadHistory(), profile) : null),
+    [plan, profile],
+  );
+
+  if (!ready || !onboarded || !plan || !adapted) {
     return <div className="flex min-h-[50vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-2 border-accent border-t-transparent" /></div>;
   }
 
-  const day = plan.days.find((d) => d.index === selected) ?? plan.days[0];
+  const day = adapted.plan.days.find((d) => d.index === selected) ?? adapted.plan.days[0];
   const alternatives = replacing ? getAlternatives(plan, replacing.day, replacing.ex) : [];
 
   const applyReplace = (newId: string) => {
@@ -93,8 +101,15 @@ function ProgramContent() {
             </div>
           </div>
 
+          {adapted.notes.length > 0 && (
+            <div className="mx-4 mt-4 space-y-1 rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              {adapted.notes.map((n, i) => <p key={i}>{n}</p>)}
+            </div>
+          )}
+
           <div className="mt-4 space-y-2 px-4">
             {day.exercises.map((ex, i) => {
+              const target = adapted.targets[ex.exerciseId];
               const meta = getExercise(ex.exerciseId);
               const reps = ex.unit === 'sec' ? `${ex.repMin}–${ex.repMax} с` : `${ex.repMin}–${ex.repMax}`;
               const key = `${day.index}-${i}`;
@@ -105,13 +120,19 @@ function ProgramContent() {
                     <ExerciseIllustration primary={meta.primary} pattern={meta.pattern} size={48} />
                     <div className="min-w-0 flex-1">
                       <p className="font-medium text-gray-900">{meta.nameRu}</p>
-                      <p className="mt-0.5 text-sm text-gray-500">{MUSCLE_LABELS_RU[ex.targetMuscle]} · {ex.sets}×{reps} · отдых {ex.restSec} с</p>
+                      <p className="mt-0.5 text-sm text-gray-500">{MUSCLE_LABELS_RU[ex.targetMuscle]} · {ex.sets}×{reps} · отдых {ex.restSec} с{target?.weightKg != null ? ` · ${String(target.weightKg).replace('.', ',')} кг` : ''}</p>
                     </div>
                     {isExp ? <ChevronUp size={18} className="mt-1 shrink-0 text-gray-400" /> : <ChevronDown size={18} className="mt-1 shrink-0 text-gray-400" />}
                   </button>
                   {isExp && (
                     <div className="border-t border-gray-100 px-4 pb-4 pt-3">
                       <p className="text-sm leading-relaxed text-gray-600">{meta.instruction}</p>
+                      {target && (
+                        <p className="mt-2 text-xs leading-relaxed text-gray-500">
+                          {target.lastPerformance && <span className="font-medium text-gray-700">В прошлый раз: {target.lastPerformance}. </span>}
+                          {target.reason}
+                        </p>
+                      )}
                       <div className="mt-3">
                         <Button variant="secondary" size="sm" onClick={() => setReplacing({ day: day.index, ex: i })}>
                           <Replace size={14} /> Заменить
