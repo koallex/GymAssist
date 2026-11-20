@@ -55,7 +55,7 @@ export default function HomePage() {
               <p className="mt-1 text-sm text-blue-100">≈ {nextDay.estimatedMinutes} мин · {nextDay.exercises.length} упр.</p>
             </div>
             <div className="p-4">
-              <Link href={`/program?day=${nextDay.index}`}>
+              <Link href={`/workout?day=${nextDay.index}`}>
                 <Button fullWidth size="lg"><Play size={18} fill="currentColor" /> Начать тренировку</Button>
               </Link>
             </div>

@@ -126,3 +126,40 @@ export interface WorkoutPlan {
   notes: string[];
   progression: ProgressionRule;
 }
+
+// ─── История тренировок (этап 6) ───
+
+export interface LoggedSet {
+  setIndex: number;
+  /** Фактический вес, кг. null = не введено / bodyweight. */
+  weightKg: number | null;
+  /** Фактические повторения или секунды. */
+  reps: number | null;
+  completed: boolean;
+  completedAt?: string;
+}
+
+export interface LoggedExercise {
+  exerciseId: string;
+  targetMuscle: MuscleId;
+  plannedSets: number;
+  plannedRepMin: number;
+  plannedRepMax: number;
+  unit: 'reps' | 'sec';
+  restSec: number;
+  sets: LoggedSet[];
+}
+
+export interface WorkoutSession {
+  id: string;
+  /** Индекс дня в плане (PlanDay.index). */
+  planDayIndex: number;
+  dayName: string;
+  focus: string;
+  startedAt: string;
+  finishedAt?: string;
+  /** true если пользователь явно завершил. */
+  completed: boolean;
+  exercises: LoggedExercise[];
+  notes?: string;
+}

@@ -126,6 +126,12 @@ function ProgramContent() {
         </>
       )}
 
+      <div className="mt-6 px-4">
+        <Link href={`/workout?day=${day.index}`}>
+          <Button fullWidth size="lg">Начать эту тренировку</Button>
+        </Link>
+      </div>
+
       {replacing && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center">
           <div className="max-h-[80dvh] w-full max-w-lg overflow-hidden rounded-t-3xl bg-white sm:rounded-3xl">

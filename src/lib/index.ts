@@ -9,3 +9,4 @@ export * from './workoutGenerator';
 export * from './exerciseAlternatives';
 export * from './analytics';
 export * from './storage';
+export * from './workoutSession';
