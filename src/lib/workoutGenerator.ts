@@ -329,7 +329,7 @@ function assemblePlan(profile: UserProfile, split: SplitTemplate, pool: Exercise
     for (const m of new Set(trimmed.map((p) => p.targetMuscle))) coverage[m] = (coverage[m] ?? 0) + 1;
     return {
       index: i,
-      weekday: split.weekdays[i],
+      weekday: profile.preferredWeekdays?.[i] ?? split.weekdays[i],
       name: d.name,
       focus: d.focus,
       muscles: [...d.muscles],

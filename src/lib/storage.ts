@@ -9,6 +9,7 @@ const KEYS = {
   history: 'gym-assistant:history:v1',
   activeSession: 'gym-assistant:active-session:v1',
   bodyWeight: 'gym-assistant:body-weight:v1',
+  coachChat: 'gym-assistant:coach-chat:v1',
 } as const;
 
 function safeParse<T>(raw: string | null): T | null {

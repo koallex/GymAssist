@@ -64,6 +64,8 @@ export interface UserProfile {
   level: Level;
   goal: Goal;
   daysPerWeek: 2 | 3 | 4 | 5 | 6;
+  /** Выбранные дни недели: 0 = понедельник, 6 = воскресенье. */
+  preferredWeekdays?: number[];
   sessionMinutes: 30 | 45 | 60 | 75 | 90;
   preferredFormat: PreferredFormat;
   availableEquipment: Equipment[];
