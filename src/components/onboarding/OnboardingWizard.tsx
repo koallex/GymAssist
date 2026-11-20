@@ -200,6 +200,16 @@ export function OnboardingWizard() {
     });
   };
 
+  const toggleWeekday = (day: number) => {
+    setDraft((d) => {
+      const current = d.preferredWeekdays ?? [];
+      const next = current.includes(day) ? current.filter((x) => x !== day) : [...current, day].sort((a, b) => a - b);
+      if (next.length > 6) return d;
+      return { ...d, preferredWeekdays: next, daysPerWeek: (next.length || d.daysPerWeek) as UserProfile['daysPerWeek'] };
+    });
+    setError(null);
+  };
+
   const toggleLimitation = (j: JointTag) => {
     setDraft((d) => {
       const has = d.limitations.includes(j);
@@ -228,7 +238,7 @@ export function OnboardingWizard() {
       case 'goal':
         return !!draft.goal;
       case 'schedule':
-        return [2, 3, 4, 5, 6].includes(draft.daysPerWeek);
+        return [2, 3, 4, 5, 6].includes(draft.daysPerWeek) && (draft.preferredWeekdays?.length ?? 0) === draft.daysPerWeek;
       case 'duration':
         return [30, 45, 60, 75, 90].includes(draft.sessionMinutes);
       case 'equipment':
@@ -358,14 +368,13 @@ export function OnboardingWizard() {
 
         {current.id === 'schedule' && (
           <div className="space-y-4">
-            <p className="text-sm text-gray-500">Сколько раз в неделю готовы тренироваться?</p>
-            <div className="flex flex-wrap gap-2">
-              {([2, 3, 4, 5, 6] as const).map((d) => (
-                <Chip key={d} selected={draft.daysPerWeek === d} onClick={() => update('daysPerWeek', d)}>
-                  {d} {d < 5 ? 'дня' : 'дней'}
-                </Chip>
+            <p className="text-sm text-gray-500">Выберите конкретные дни, в которые вам удобно тренироваться.</p>
+            <div className="grid grid-cols-4 gap-2">
+              {(['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'] as const).map((day, i) => (
+                <Chip key={day} selected={(draft.preferredWeekdays ?? []).includes(i)} onClick={() => toggleWeekday(i)}>{day}</Chip>
               ))}
             </div>
+            <p className="text-xs text-gray-500">Выбрано: {draft.preferredWeekdays?.length ?? 0} из 2–6 дней. Сейчас: {draft.daysPerWeek} тренировки в неделю.</p>
             <p className="text-sm text-gray-500">Предпочтительный формат (можно «Авто»):</p>
             <div className="space-y-2">
               {(
