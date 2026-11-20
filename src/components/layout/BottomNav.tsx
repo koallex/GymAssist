@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Dumbbell, BookOpen, TrendingUp, User } from 'lucide-react';
+import { Home, Dumbbell, BookOpen, TrendingUp, User, Bot } from 'lucide-react';
 
 const items = [
   { href: '/', label: 'Главная', icon: Home },
   { href: '/program', label: 'Программа', icon: Dumbbell },
   { href: '/library', label: 'Библиотека', icon: BookOpen },
   { href: '/progress', label: 'Прогресс', icon: TrendingUp },
+  { href: '/coach', label: 'Coach', icon: Bot },
   { href: '/profile', label: 'Профиль', icon: User },
 ] as const;
 
