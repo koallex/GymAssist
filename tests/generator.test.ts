@@ -144,6 +144,10 @@ describe('различия уровней и целей', () => {
     expect(generateProgram({ daysPerWeek: 4 }).splitId).toBe('upper_lower_4');
     expect(generateProgram({ daysPerWeek: 6 }).splitId).toBe('ppl_6');
   });
+  it('выбранные дни недели сохраняются в каждом дне плана', () => {
+    const plan = generateProgram({ daysPerWeek: 3, preferredWeekdays: [1, 3, 5] });
+    expect(plan.days.map((d) => d.weekday)).toEqual([1, 3, 5]);
+  });
 });
 
 describe('ограничения и оборудование', () => {
