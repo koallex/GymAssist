@@ -28,7 +28,7 @@ import {
 } from '@/lib';
 import { Button } from '@/components/ui/Button';
 import { ProgressBar } from '@/components/ui/ProgressBar';
-import { ExerciseIllustration } from '@/components/exercises/ExerciseIllustration';
+import { ExerciseIllustration, exerciseVideoSearchUrlRu } from '@/components/exercises/ExerciseIllustration';
 import { RestTimer } from './RestTimer';
 
 export function WorkoutMode({ day }: { day: PlanDay }) {
@@ -172,6 +172,14 @@ export function WorkoutMode({ day }: { day: PlanDay }) {
           </div>
 
           <p className="mt-3 text-sm leading-relaxed text-gray-600">{meta.instruction}</p>
+          <a
+            href={exerciseVideoSearchUrlRu(meta.nameRu)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 inline-flex text-sm font-medium text-accent"
+          >
+            Видео техники →
+          </a>
 
           {/* Sets */}
           <div className="mt-5 space-y-2">

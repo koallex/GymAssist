@@ -13,7 +13,7 @@ import {
 } from '@/lib';
 import { AppShell } from '@/components/layout/AppShell';
 import { Card } from '@/components/ui/Card';
-import { ExerciseIllustration } from '@/components/exercises/ExerciseIllustration';
+import { ExerciseIllustration, exerciseVideoSearchUrl, exerciseVideoSearchUrlRu } from '@/components/exercises/ExerciseIllustration';
 import { useAppData } from '@/hooks/useAppData';
 
 export default function ExerciseDetailPage() {
@@ -109,6 +109,31 @@ export default function ExerciseDetailPage() {
           <Card className="p-4">
             <h2 className="text-sm font-semibold text-gray-900">Техника</h2>
             <p className="mt-2 text-sm leading-relaxed text-gray-600">{exercise.instruction}</p>
+          </Card>
+
+          <Card className="p-4">
+            <h2 className="text-sm font-semibold text-gray-900">Видео техники</h2>
+            <p className="mt-1 text-xs text-gray-500">
+              Откроется поиск на YouTube по названию упражнения. Выберите ролик с корректной техникой.
+            </p>
+            <div className="mt-3 flex flex-col gap-2">
+              <a
+                href={exerciseVideoSearchUrl(exercise.nameEn)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-11 items-center justify-center rounded-xl bg-accent text-sm font-medium text-white"
+              >
+                Смотреть технику (EN)
+              </a>
+              <a
+                href={exerciseVideoSearchUrlRu(exercise.nameRu)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-11 items-center justify-center rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-800"
+              >
+                Смотреть технику (RU)
+              </a>
+            </div>
           </Card>
         </div>
       </div>

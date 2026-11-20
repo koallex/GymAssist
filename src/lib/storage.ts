@@ -1,5 +1,5 @@
-/** Локальное хранение профиля, программы и истории. Без внешних сервисов. */
-import type { UserProfile, WorkoutPlan, WorkoutSession } from './types';
+/** Локальное хранение профиля, программы, истории и веса. Без внешних сервисов. */
+import type { BodyWeightEntry, UserProfile, WorkoutPlan, WorkoutSession } from './types';
 import { normalizeProfile } from './userProfile';
 
 const KEYS = {
@@ -8,6 +8,7 @@ const KEYS = {
   onboardingDone: 'gym-assistant:onboarding-done:v1',
   history: 'gym-assistant:history:v1',
   activeSession: 'gym-assistant:active-session:v1',
+  bodyWeight: 'gym-assistant:body-weight:v1',
 } as const;
 
 function safeParse<T>(raw: string | null): T | null {
@@ -51,8 +52,6 @@ export function setOnboardingDone(done = true): void {
   localStorage.setItem(KEYS.onboardingDone, done ? '1' : '0');
 }
 
-// ─── История ───
-
 export function loadHistory(): WorkoutSession[] {
   if (typeof window === 'undefined') return [];
   return safeParse<WorkoutSession[]>(localStorage.getItem(KEYS.history)) ?? [];
@@ -66,11 +65,8 @@ export function saveHistory(sessions: WorkoutSession[]): void {
 export function appendSession(session: WorkoutSession): void {
   const list = loadHistory();
   list.unshift(session);
-  // Храним последние 200 сессий
   saveHistory(list.slice(0, 200));
 }
-
-// ─── Активная сессия (черновик, чтобы не потерять при перезагрузке) ───
 
 export function loadActiveSession(): WorkoutSession | null {
   if (typeof window === 'undefined') return null;
@@ -81,6 +77,33 @@ export function saveActiveSession(session: WorkoutSession | null): void {
   if (typeof window === 'undefined') return;
   if (session) localStorage.setItem(KEYS.activeSession, JSON.stringify(session));
   else localStorage.removeItem(KEYS.activeSession);
+}
+
+export function loadBodyWeight(): BodyWeightEntry[] {
+  if (typeof window === 'undefined') return [];
+  return safeParse<BodyWeightEntry[]>(localStorage.getItem(KEYS.bodyWeight)) ?? [];
+}
+
+export function saveBodyWeight(entries: BodyWeightEntry[]): void {
+  if (typeof window === 'undefined') return;
+  const sorted = [...entries].sort((a, b) => a.date.localeCompare(b.date));
+  localStorage.setItem(KEYS.bodyWeight, JSON.stringify(sorted));
+}
+
+export function addBodyWeight(weightKg: number, date?: string, note?: string): BodyWeightEntry[] {
+  const entries = loadBodyWeight();
+  const d = date ?? new Date().toISOString().slice(0, 10);
+  const existing = entries.findIndex((e) => e.date === d);
+  const entry: BodyWeightEntry = {
+    id: `${Date.now().toString(36)}`,
+    date: d,
+    weightKg: Math.round(weightKg * 10) / 10,
+    note,
+  };
+  if (existing >= 0) entries[existing] = entry;
+  else entries.push(entry);
+  saveBodyWeight(entries);
+  return loadBodyWeight();
 }
 
 export function clearAllData(): void {

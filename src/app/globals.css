@@ -13,3 +13,105 @@ body {
 .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
 .scrollbar-none::-webkit-scrollbar { display: none; }
 .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+/* ── Анимации паттернов упражнений ── */
+@keyframes ex-press {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes ex-pull {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
+@keyframes ex-raise {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-12deg); }
+}
+@keyframes ex-raise-r {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(12deg); }
+}
+@keyframes ex-squat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+@keyframes ex-hinge {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(18deg); }
+}
+@keyframes ex-core {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(10deg); }
+}
+@keyframes ex-calf {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+@keyframes ex-arrow-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.9; }
+}
+
+.ex-anim-press .ex-arm-l,
+.ex-anim-press .ex-arm-r {
+  transform-origin: 60px 34px;
+  animation: ex-press 1.6s ease-in-out infinite;
+}
+.ex-anim-pull .ex-arm-l,
+.ex-anim-pull .ex-arm-r {
+  transform-origin: 60px 34px;
+  animation: ex-pull 1.6s ease-in-out infinite;
+}
+.ex-anim-raise .ex-arm-l {
+  transform-origin: 60px 34px;
+  animation: ex-raise 1.8s ease-in-out infinite;
+}
+.ex-anim-raise .ex-arm-r {
+  transform-origin: 60px 34px;
+  animation: ex-raise-r 1.8s ease-in-out infinite;
+}
+.ex-anim-squat .ex-leg-l,
+.ex-anim-squat .ex-leg-r {
+  transform-origin: 60px 52px;
+  animation: ex-squat 1.5s ease-in-out infinite;
+}
+.ex-anim-hinge .ex-limbs {
+  transform-origin: 60px 52px;
+  animation: ex-hinge 1.8s ease-in-out infinite;
+}
+.ex-anim-core .ex-limbs {
+  transform-origin: 60px 52px;
+  animation: ex-core 1.6s ease-in-out infinite;
+}
+.ex-anim-calf .ex-leg-l,
+.ex-anim-calf .ex-leg-r {
+  animation: ex-calf 1.2s ease-in-out infinite;
+}
+
+.ex-anim-press .ex-arrows,
+.ex-anim-pull .ex-arrows,
+.ex-anim-raise .ex-arrows,
+.ex-anim-squat .ex-arrows,
+.ex-anim-hinge .ex-arrows,
+.ex-anim-core .ex-arrows,
+.ex-anim-calf .ex-arrows {
+  animation: ex-arrow-pulse 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ex-anim-press .ex-arm-l,
+  .ex-anim-press .ex-arm-r,
+  .ex-anim-pull .ex-arm-l,
+  .ex-anim-pull .ex-arm-r,
+  .ex-anim-raise .ex-arm-l,
+  .ex-anim-raise .ex-arm-r,
+  .ex-anim-squat .ex-leg-l,
+  .ex-anim-squat .ex-leg-r,
+  .ex-anim-hinge .ex-limbs,
+  .ex-anim-core .ex-limbs,
+  .ex-anim-calf .ex-leg-l,
+  .ex-anim-calf .ex-leg-r,
+  .ex-arrows {
+    animation: none !important;
+  }
+}

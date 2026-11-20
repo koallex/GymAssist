@@ -163,3 +163,11 @@ export interface WorkoutSession {
   exercises: LoggedExercise[];
   notes?: string;
 }
+
+/** Запись массы тела для графика. */
+export interface BodyWeightEntry {
+  id: string;
+  date: string; // YYYY-MM-DD
+  weightKg: number;
+  note?: string;
+}
