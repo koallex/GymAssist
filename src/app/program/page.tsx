@@ -13,6 +13,7 @@ import {
   type WorkoutPlan,
 } from '@/lib';
 import { AppShell } from '@/components/layout/AppShell';
+import { ExerciseIllustration } from '@/components/exercises/ExerciseIllustration';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useAppData } from '@/hooks/useAppData';
@@ -101,6 +102,7 @@ function ProgramContent() {
               return (
                 <Card key={key} className={`overflow-hidden ${replacing?.day === day.index && replacing.ex === i ? 'ring-2 ring-accent' : ''}`}>
                   <button type="button" onClick={() => setExpanded(isExp ? null : key)} className="flex w-full items-start gap-3 px-4 py-3.5 text-left">
+                    <ExerciseIllustration primary={meta.primary} pattern={meta.pattern} size={48} />
                     <div className="min-w-0 flex-1">
                       <p className="font-medium text-gray-900">{meta.nameRu}</p>
                       <p className="mt-0.5 text-sm text-gray-500">{MUSCLE_LABELS_RU[ex.targetMuscle]} · {ex.sets}×{reps} · отдых {ex.restSec} с</p>
