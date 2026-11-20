@@ -8,3 +8,4 @@ export * from './workoutSplit';
 export * from './workoutGenerator';
 export * from './exerciseAlternatives';
 export * from './analytics';
+export * from './storage';
